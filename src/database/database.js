@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const connectDatabase = () => {
     console.log("Wait, we're attempting connect to database");
-    mongoose.connect("mongodb+srv://willmene:280102Wmo@cluster0.ofkqonm.mongodb.net/?retryWrites=true&w=majority",
+    mongoose.connect(process.env.MONGODB_URI,
         {
             dbName: "BreakingNews"
         }
