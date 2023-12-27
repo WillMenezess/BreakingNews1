@@ -1,8 +1,9 @@
 {
   "name": "breakingnews1",
   "version": "1.0.0",
-  "description": "API for Single Page application Break",
+  "description": "API for Single Page application breakingnews1",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index"
