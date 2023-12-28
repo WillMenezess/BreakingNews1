@@ -1,28 +1,7 @@
 import { createNewsService, findAllNewsService } from "../sevices/news.service.js";
 
 const createNewsController = async (req, res) => {
-    
-    const { authorization } = req.headers;
-
     try {
-
-        if (!authorization) {
-            return res.send(401);
-        };
-
-        const parts = authorization.split(" ");
-        
-        var tamanho = Object.keys(parts).length;
-
-        if (tamanho !== 2) {
-            return res.send(401);
-        }
-
-        const [schema, token] = parts;
-
-        if (schema !== "Bearer") {
-            return res.send(401);
-        };       
 
         const { title, text, banner } = req.body;
 
