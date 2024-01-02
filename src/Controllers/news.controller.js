@@ -1,4 +1,4 @@
-import { createNewsService, findAllNewsService, countNewsService, topNewsService, findByIdService } from "../sevices/news.service.js";
+import { createNewsService, findAllNewsService, countNewsService, topNewsService, findByIdService, searchByTitleService } from "../sevices/news.service.js";
 
 const createNewsController = async (req, res) => {
     try {
@@ -116,4 +116,32 @@ const findByIdController = async (req, res) => {
         })
     } catch (err) { res.status(500).send({ message: err.message }) }
 };
-export { createNewsController, findAllNewsController, topNewsController, findByIdController };
+
+const searchByTitleController = async (req, res) => {
+    try {
+        const { title } = req.query;
+
+        const news = await searchByTitleService(title);
+
+        if (news.lenght === 0) {
+            return res.status(400).send({ message: "There are no posts with this title" });
+        }
+
+        return res.send({
+            results: news.map((Item) => ({
+                id: Item._id,
+                title: Item.title,
+                text: Item.text,
+                banner: Item.banner,
+                likes: Item.likes,
+                comments: Item.comments,
+                name: Item.user.name,
+                userName: Item.user.username,
+                userAvatar: Item.user.avatar
+            })),
+        });
+
+    } catch (err) { res.status(500).send({ message: err.message }) }
+};
+
+export { createNewsController, findAllNewsController, topNewsController, findByIdController, searchByTitleController };
