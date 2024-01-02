@@ -1,4 +1,4 @@
-import { createNewsService, findAllNewsService, countNewsService, topNewsService, findByIdService, searchByTitleService, byUserService} from "../sevices/news.service.js";
+import { createNewsService, findAllNewsService, countNewsService, topNewsService, findByIdService, searchByTitleService, byUserService, updateUserService } from "../sevices/news.service.js";
 
 const createNewsController = async (req, res) => {
     try {
@@ -166,4 +166,26 @@ const byUserController = async (req, res) => {
     } catch (err) { res.status(500).send({ message: err.message }) }
 };
 
-export { createNewsController, findAllNewsController, topNewsController, findByIdController, searchByTitleController, byUserController };
+const updateUserController = async (req, res) => {
+    try {
+
+        const { title, text, banner } = req.body;
+        const { id } = req.params;
+
+        if (!title && !text && !banner) {
+            res.status(400).send({ message: "Submit all fields for registration" });
+        }
+
+        const news = await findByIdService(id);
+
+        if (news.user._id != req.userId) {
+            return res.status(400).send({ message: "You didn't update this post", });
+        }
+
+        await updateUserService(id, title, text, banner);
+
+        return res.send({ message: "Post sucessfully updated!" });
+
+    } catch (err) { res.status(500).send({ message: err.message }) }
+};
+export { createNewsController, findAllNewsController, topNewsController, findByIdController, searchByTitleController, byUserController, updateUserController };
