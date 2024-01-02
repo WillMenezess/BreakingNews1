@@ -1,4 +1,4 @@
-import { createNewsService, findAllNewsService, countNewsService, topNewsService, findByIdService, searchByTitleService } from "../sevices/news.service.js";
+import { createNewsService, findAllNewsService, countNewsService, topNewsService, findByIdService, searchByTitleService, byUserService} from "../sevices/news.service.js";
 
 const createNewsController = async (req, res) => {
     try {
@@ -144,4 +144,26 @@ const searchByTitleController = async (req, res) => {
     } catch (err) { res.status(500).send({ message: err.message }) }
 };
 
-export { createNewsController, findAllNewsController, topNewsController, findByIdController, searchByTitleController };
+const byUserController = async (req, res) => {
+    try {
+        const id = req.userId;
+
+        const news = await byUserService(id);
+
+        return res.send({
+            results: news.map((Item) => ({
+                id: Item._id,
+                title: Item.title,
+                text: Item.text,
+                banner: Item.banner,
+                likes: Item.likes,
+                comments: Item.comments,
+                name: Item.user.name,
+                userName: Item.user.username,
+                userAvatar: Item.user.avatar
+            })),
+        });
+    } catch (err) { res.status(500).send({ message: err.message }) }
+};
+
+export { createNewsController, findAllNewsController, topNewsController, findByIdController, searchByTitleController, byUserController };
