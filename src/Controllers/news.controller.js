@@ -1,4 +1,4 @@
-import { createNewsService, findAllNewsService, countNewsService } from "../sevices/news.service.js";
+import { createNewsService, findAllNewsService, countNewsService, topNewsService } from "../sevices/news.service.js";
 
 const createNewsController = async (req, res) => {
     try {
@@ -21,52 +21,77 @@ const createNewsController = async (req, res) => {
 }
 
 const findAllNewsController = async (req, res) => {
-    let{ limit, offset } = req.query;
+    let { limit, offset } = req.query;
 
-    limit = Number(limit);
-    offset = Number(offset);
- 
-    if (!limit){
-        limit = 5;
-    }
+    try {
+        limit = Number(limit);
+        offset = Number(offset);
 
-    if (!offset){
-        offset = 0;
-    }
+        if (!limit) {
+            limit = 5;
+        }
 
-    const news = await findAllNewsService(offset, limit);
-    const total = await countNewsService();
-    const currentUrl = req.baseUrl;
+        if (!offset) {
+            offset = 0;
+        }
 
-    const next = offset + limit;
-    const nextUrl = next < total ? `${currentUrl}?limit=${limit}&offset=${offset}` : null;
-    
-    const previous = offset - limit < 0 ? null : offset - limit;
-    const previousUrl = previous != null ? `${currentUrl}?limit=${limit}&offset=${previous}` : null;
+        const news = await findAllNewsService(offset, limit);
+        const total = await countNewsService();
+        const currentUrl = req.baseUrl;
 
-    if (news.lenght === 0) {
-        return res.status(400).send({ message: "There are no registered news" });
-    }
+        const next = offset + limit;
+        const nextUrl = next < total ? `${currentUrl}?limit=${limit}&offset=${offset}` : null;
 
-    res.send({
-        nextUrl,
-        previousUrl,
-        limit,
-        offset,
-        total,
+        const previous = offset - limit < 0 ? null : offset - limit;
+        const previousUrl = previous != null ? `${currentUrl}?limit=${limit}&offset=${previous}` : null;
 
-        results: news.map((Item) => ({
-            id: Item._id,
-            title: Item.title,
-            text: Item.text,
-            banner: Item.banner,
-            likes: Item.likes,
-            comments: Item.comments,
-            name: Item.user.name,
-            userName: Item.user.username,
-            userAvatar: Item.user.avatar
-        })),
-    });
+        if (news.lenght === 0) {
+            return res.status(400).send({ message: "There are no registered news" });
+        }
+
+        res.send({
+            nextUrl,
+            previousUrl,
+            limit,
+            offset,
+            total,
+
+            results: news.map((Item) => ({
+                id: Item._id,
+                title: Item.title,
+                text: Item.text,
+                banner: Item.banner,
+                likes: Item.likes,
+                comments: Item.comments,
+                name: Item.user.name,
+                userName: Item.user.username,
+                userAvatar: Item.user.avatar
+            })),
+        });
+    } catch (err) { res.status(500).send({ message: err.message }) }
 }
 
-export { createNewsController, findAllNewsController };
+const topNewsController = async (req, res) => {
+    try {
+        const news = await topNewsService();
+
+        if (!news) {
+            return res.status(400).send({ message: "There are no registered news" });
+        }
+
+        res.send({
+            news: {
+                id: news._id,
+                title: news.title,
+                text: news.text,
+                banner: news.banner,
+                likes: news.likes,
+                comments: news.comments,
+                name: news.user.name,
+                userName: news.user.username,
+                userAvatar: news.user.avatar
+            }
+        });
+    } catch (err) { res.status(500).send({ message: err.message }) }
+};
+export { createNewsController, findAllNewsController, topNewsController };
