@@ -8,9 +8,12 @@ const countNewsService = () => News.countDocuments();
 
 const topNewsService = () => News.findOne().sort({ _id: -1 }).populate("user");
 
+const findByIdService = (id) => News.findById(id).populate("user");
+
 export {
     createNewsService,
     findAllNewsService,
     countNewsService,
     topNewsService,
+    findByIdService,
 };

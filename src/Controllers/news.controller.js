@@ -1,4 +1,4 @@
-import { createNewsService, findAllNewsService, countNewsService, topNewsService } from "../sevices/news.service.js";
+import { createNewsService, findAllNewsService, countNewsService, topNewsService, findByIdService } from "../sevices/news.service.js";
 
 const createNewsController = async (req, res) => {
     try {
@@ -18,7 +18,7 @@ const createNewsController = async (req, res) => {
 
         res.send(201);
     } catch (err) { res.status(500).send({ message: err.message }) }
-}
+};
 
 const findAllNewsController = async (req, res) => {
     let { limit, offset } = req.query;
@@ -69,7 +69,7 @@ const findAllNewsController = async (req, res) => {
             })),
         });
     } catch (err) { res.status(500).send({ message: err.message }) }
-}
+};
 
 const topNewsController = async (req, res) => {
     try {
@@ -94,4 +94,26 @@ const topNewsController = async (req, res) => {
         });
     } catch (err) { res.status(500).send({ message: err.message }) }
 };
-export { createNewsController, findAllNewsController, topNewsController };
+
+const findByIdController = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const news = await findByIdService(id);
+
+        return res.send({
+            news: {
+                id: news._id,
+                title: news.title,
+                text: news.text,
+                banner: news.banner,
+                likes: news.likes,
+                comments: news.comments,
+                name: news.user.name,
+                userName: news.user.username,
+                userAvatar: news.user.avatar
+            }
+        })
+    } catch (err) { res.status(500).send({ message: err.message }) }
+};
+export { createNewsController, findAllNewsController, topNewsController, findByIdController };
