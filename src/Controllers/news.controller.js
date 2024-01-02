@@ -13,7 +13,7 @@ const createNewsController = async (req, res) => {
             title,
             text,
             banner,
-            user: { _id: "658d6b5b250f646d5440c73d" },
+            user: req.userId,
         });
 
         res.send(201);
